@@ -1,0 +1,17 @@
+#created to stop the M notifications on things like __pycache__
+
+# Bytecode files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# VS Code settings
+.vscode/
+
+# macOS and IDE files
+.DS_Store
+*.swp
