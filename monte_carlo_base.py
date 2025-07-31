@@ -23,7 +23,7 @@ class MonteCarloBase:
         )
         log_paths = np.cumsum(increments, axis=1)
         paths = self.S * np.exp(
-            np.hstack([np.zeros(self.sims,1), log_paths]), 
+            np.hstack([np.zeros((self.sims,1)), log_paths]), 
         )
         return paths
     
@@ -35,14 +35,8 @@ class MonteCarloBase:
 # By default, NumPy uses ddof=0, which computes the population standard deviation:
 # σ_population = sqrt( sum((xi – x̄)²) / N )
 
-
 # When you set ddof=1, the formula becomes the sample standard deviation (Bessel’s correction):
 # σ_sample = sqrt( sum((xi – x̄)²) / (N – 1) )
 
-
-# Here, N is the number of observations (your self.sims).
-# Why use ddof=1 in Monte Carlo payoffs
-# - You’re estimating the true volatility of the discounted payoffs from a finite simulation.
-# - Dividing by N–1 instead of N removes the small bias in the variance estimate, giving an unbiased estimator.
         std_error = np.std(discounted, ddof=1) / np.sqrt(self.sims)
         return mean_price, std_error
