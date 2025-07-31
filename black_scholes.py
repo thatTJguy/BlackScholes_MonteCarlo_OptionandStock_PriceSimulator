@@ -16,6 +16,12 @@ def calculate_call_price(S, X, T, r, sigma):
     call_price = (S * norm.cdf(d1) - X * np.exp(-r * T) * norm.cdf(d2))
     return call_price
 
+def calculate_put_price(S, X, T, r, sigma):
+    d1 = calculate_d1(S, X, T, r, sigma)
+    d2 = calculate_d2(d1, sigma, T)
+    put_price = (X * np.exp(-r * T) * norm.cdf(-d2)) - (S * norm.cdf(-d1))
+    return put_price
+
 def plot_option_vs_stock(S, X, T, r, sigma):
     prices = np.linspace(0.5 * S, 1.5 * S, 100)
     call_prices = [calculate_call_price(p, X, T, r, sigma) for p in prices]

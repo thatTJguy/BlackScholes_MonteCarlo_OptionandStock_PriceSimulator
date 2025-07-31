@@ -5,6 +5,7 @@ import numpy as np
 
 from black_scholes import (
     calculate_call_price,
+    calculate_put_price,
     plot_option_vs_stock,
     plot_option_vs_time,
     plot_option_vs_volatility
@@ -12,20 +13,6 @@ from black_scholes import (
 from monte_carlo_option import run_monte_carlo_option
 from monte_carlo_stock import run_monte_carlo_stock
 from monte_carlo_base import MonteCarloBase
-
-# --- Plotting function for Black-Scholes ---
-def plot_option_vs_stock(S, X, T, r, sigma):
-    prices = np.linspace(0.5 * S, 1.5 * S, 100)
-    call_prices = [calculate_call_price(price, X, T, r, sigma) for price in prices]
-
-    fig, ax = plt.subplots()
-    ax.plot(prices, call_prices, label='Call Option Price')
-    ax.axvline(S, color='gray', linestyle='--', label='Current Price')
-    ax.set_xlabel('Stock Price')
-    ax.set_ylabel('Option Price')
-    ax.set_title('Black-Scholes Call Option Price vs. Stock Price')
-    ax.legend()
-    return fig
 
 # --- App Title ---
 st.title("Option and Stock Pricing Simulator")
@@ -80,11 +67,28 @@ if model == "Monte Carlo":
 # --- Run Simulation ---
 if S is not None:
     if model == "Black-Scholes" and sim_type == "Option Pricing":
-        price = calculate_call_price(S, X, T, r, sigma)
-        st.success(f"Black-Scholes Call Option Price: ${price:.2f}")
+        if call:
+            price = calculate_call_price(S, X, T, r, sigma)
+            st.success(f"Black-Scholes Call Option Price: ${price:.2f}")
+        else:
+            price = calculate_put_price(S, X, T, r, sigma)
+            st.success(f"Black-Scholes Put Option Price: ${price:.2f}")
 
-        if st.checkbox("Show Option Price vs. Stock Price Plot"):
-            fig = plot_option_vs_stock(S, X, T, r, sigma)
+        # 👉 This is where the plot selection dropdown goes
+        if st.checkbox("Show Black-Scholes Sensitivity Plot"):
+            plot_type = st.selectbox("Select Plot Type:", [
+                "Option Price vs. Stock Price",
+                "Option Price vs. Time to Expiration",
+                "Option Price vs. Volatility"
+            ])
+
+            if plot_type == "Option Price vs. Stock Price":
+                fig = plot_option_vs_stock(S, X, T, r, sigma)
+            elif plot_type == "Option Price vs. Time to Expiration":
+                fig = plot_option_vs_time(S, X, r, sigma)
+            elif plot_type == "Option Price vs. Volatility":
+                fig = plot_option_vs_volatility(S, X, T, r)
+
             st.pyplot(fig)
 
     elif model == "Monte Carlo":
